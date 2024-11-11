@@ -12,12 +12,6 @@
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="Inserisci la tua email"/>
-          <mat-error *ngIf="loginForm.get('email')?.invalid">Email non valida</mat-error>
-        </mat-form-field>
-
-        <mat-form-field>
           <mat-label>Password</mat-label>
           <input matInput formControlName="password" type="password" placeholder="Inserisci la tua password"/>
           <mat-error *ngIf="loginForm.get('password')?.invalid">Password richiesta</mat-error>

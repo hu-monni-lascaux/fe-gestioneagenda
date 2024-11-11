@@ -18,13 +18,13 @@ export class LoginService {
   private loginRequest(user: UserModel) {
     const {username, password} = user;
 
-    this.http.post<string>('http://localhost:8080/api/v1/auth', {
+    this.http.post<{ jwtToken: string }>('http://localhost:8080/api/v1/auth/authenticate', {
       username: username,
       password: password,
     })
-      .subscribe(token => {
-        this.#token = token;
-        console.log(this.#token);
+      .subscribe(data => {
+        this.#token = data.jwtToken;
+        localStorage.setItem('token', this.#token);
       });
   }
 }
