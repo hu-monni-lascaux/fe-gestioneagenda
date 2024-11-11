@@ -9,5 +9,5 @@ export interface UserModel {
   password: string;
   role: Role;
   agendas: AgendaModel[];
-  appointments: AppointmentModel[]
+  appointments: AppointmentModel[];
 }
