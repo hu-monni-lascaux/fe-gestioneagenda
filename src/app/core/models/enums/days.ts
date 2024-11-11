@@ -1,0 +1,9 @@
+export enum Day {
+  LUNEDI,
+  MARTEDI,
+  MERCOLEDI,
+  GIOVEDI,
+  VENERDI,
+  SABATO,
+  DOMENICA,
+}
