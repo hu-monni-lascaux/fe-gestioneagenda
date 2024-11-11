@@ -27,8 +27,11 @@ export class RegistrationComponent {
     if(this.registrationForm.valid){
       const user: UserModel = this.registrationForm.value;
 
-      // console.log(user);
-      this.#authService.doRegister(user);
+      //todo: test here
+      this.#authService.doRegister(user)
+        .subscribe({
+          next: result => { console.log(result); },
+        });
 
       this.registrationForm.reset();
     }
