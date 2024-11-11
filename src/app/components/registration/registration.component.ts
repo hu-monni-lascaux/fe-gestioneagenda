@@ -4,32 +4,33 @@ import { UserModel } from '../../core/models/user.model';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  selector: 'app-registration',
+  templateUrl: './registration.component.html',
+  styleUrl: './registration.component.css'
 })
-export class LoginComponent {
+export class RegistrationComponent {
   #formBuilder = inject(FormBuilder);
   #authService = inject(AuthService);
 
-  loginForm: FormGroup;
+  registrationForm: FormGroup;
 
   constructor() {
-    this.loginForm = this.#formBuilder.group({
+    this.registrationForm = this.#formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5)]],
     });
   }
 
-  onSubmit(){
-    if(this.loginForm.valid){
-      const user: UserModel = this.loginForm.value;
+
+  onSubmit() {
+    if(this.registrationForm.valid){
+      const user: UserModel = this.registrationForm.value;
 
       // console.log(user);
-      this.#authService.doLogin(user);
+      this.#authService.doRegister(user);
 
-      this.loginForm.reset();
+      this.registrationForm.reset();
     }
   }
-
 }
