@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   CreateAppointmentDialogComponent
 } from '../../dialogs/create-appointment-dialog/create-appointment-dialog.component';
+import moment from 'moment';
 
 @Component({
   selector: 'app-agenda',
@@ -37,8 +38,8 @@ export class AgendaComponent {
 
   private handleDateClick(arg: DateClickArg) {
     // hardcoded default, fix here
-    const startDate = `${arg.dateStr}T12:00`;
-    const endDate = `${arg.dateStr}T13:00`;
+    const startDate = moment(arg.dateStr).set({ hour: 12, minute: 0 }).format('YYYY-MM-DDTHH:mm');
+    const endDate = moment(startDate).add(15, "minutes").format('YYYY-MM-DDTHH:mm');
 
     const events = this.calendarComponent?.getApi().getEvents() || [];
 

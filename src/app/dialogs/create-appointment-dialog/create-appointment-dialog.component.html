@@ -17,6 +17,11 @@
     </mat-form-field>
   </mat-dialog-content>
 
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="text">
+  </mat-form-field>
+
   <mat-dialog-actions>
     <button mat-button (click)="onCancel()">Cancel</button>
     <button mat-button color="primary" type="submit" [disabled]="!form.valid">Save</button>
