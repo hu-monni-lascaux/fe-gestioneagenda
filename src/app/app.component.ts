@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'fe-gestioneagenda';
+
+  // #auth = inject(AuthService);
+  //
+  // ngOnInit() {
+  //   const user = this.#auth.getUserData();
+  //   console.log(user);
+  // }
 }

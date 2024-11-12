@@ -15,6 +15,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { MyAgendasComponent } from './components/my-agendas/my-agendas.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { AgendaComponent } from './components/agenda/agenda.component';
+import { CreateAppointmentDialogComponent } from './dialogs/create-appointment-dialog/create-appointment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { AgendaComponent } from './components/agenda/agenda.component';
     NavbarComponent,
     MyAgendasComponent,
     AgendaComponent,
+    CreateAppointmentDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -9,9 +9,19 @@ import {jwtDecode} from "jwt-decode";
 })
 export class AuthService {
     #token?: string;
+    #tokenKey: string = 'token';
     #apiUrl: string = "http://localhost:8081/api/v1/auth"
 
     constructor(private http: HttpClient) {
+    }
+
+    getUserData(): UserModel | null {
+        const token = localStorage.getItem(this.#tokenKey);
+        if (token) {
+            const decoded: any = jwtDecode(this.#tokenKey);
+            return decoded.user as UserModel; // Restituisci i dati dell'utente
+        }
+        return null;
     }
 
     doLogin(user: UserModel) {
@@ -21,7 +31,7 @@ export class AuthService {
             username: username,
             password: password,
         }).pipe(
-            tap(data => localStorage.setItem('token', data.jwtToken)),
+            tap(data => localStorage.setItem(this.#tokenKey, data.jwtToken)),
             catchError(this.handleError)
         );
     }
@@ -34,13 +44,13 @@ export class AuthService {
             email: email,
         })
             .pipe(
-                tap(data => localStorage.setItem('token', data.jwtToken)),
+                tap(data => localStorage.setItem(this.#tokenKey, data.jwtToken)),
                 catchError(this.handleError)
             );
     }
 
     doLogout(): void {
-        localStorage.removeItem('token');
+        localStorage.removeItem(this.#tokenKey);
     }
 
     isTokenExpired() {
@@ -60,7 +70,7 @@ export class AuthService {
     }
 
     private getToken() {
-        return localStorage.getItem('token');
+        return localStorage.getItem(this.#tokenKey);
     }
 
     private handleError() {

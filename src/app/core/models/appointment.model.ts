@@ -7,6 +7,6 @@ export interface AppointmentModel {
   text: string;
   start: Date;
   end: Date;
-  user: UserModel;
-  agendas: AgendaModel[];
+  user: string;
+  agenda: AgendaModel;
 }
