@@ -69,7 +69,7 @@ export class AuthService {
         return !!token && !this.isTokenExpired(); // la doppia negazione converte il token in boolean
     }
 
-    private getToken() {
+    getToken() {
         return localStorage.getItem(this.#tokenKey);
     }
 
