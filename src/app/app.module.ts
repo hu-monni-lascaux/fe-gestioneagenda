@@ -12,6 +12,9 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { ErrorPageComponent } from './components/error-page/error-page.component';
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { MyAgendasComponent } from './components/my-agendas/my-agendas.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { AgendaComponent } from './components/agenda/agenda.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +24,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     ErrorPageComponent,
     HomepageComponent,
     NavbarComponent,
+    MyAgendasComponent,
+    AgendaComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,6 +33,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     ReactiveFormsModule,
     MaterialModule,
     HttpClientModule,
+    FullCalendarModule,
   ],
   providers: [
     provideAnimationsAsync()
