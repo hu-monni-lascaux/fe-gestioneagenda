@@ -10,7 +10,7 @@ import { overlapValidator } from '../../core/validators/overlap-validator';
   templateUrl: './create-appointment-dialog.component.html',
   styleUrl: './create-appointment-dialog.component.css'
 })
-export class CreateAppointmentDialogComponent implements OnInit {
+export class CreateAppointmentDialogComponent {
   #formBuilder = inject(FormBuilder);
   dialogRef = inject(MatDialogRef<CreateAppointmentDialogComponent>);
 
@@ -24,16 +24,8 @@ export class CreateAppointmentDialogComponent implements OnInit {
         end: [data.end, Validators.required],
       },
       {validators: overlapValidator(this.data.existingEvents)});
-  }
 
-  ngOnInit() {
-    const startControl = this.form.get('start');
-    const endControl = this.form.get('end');
-    if (startControl && endControl) {
-      // Applica il validatore end dinamicamente dopo che il controllo 'start' è disponibile
-      endControl.setValidators([Validators.required, endValidator(startControl)]);
-      this.form.updateValueAndValidity(); // Ricalcola la validità del form
-    }
+    this.form.controls[ 'end' ].setValidators([Validators.required, endValidator(this.form.controls[ 'start' ])]);
   }
 
   onSave() {

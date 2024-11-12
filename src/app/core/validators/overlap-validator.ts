@@ -1,10 +1,12 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { EventImpl } from '@fullcalendar/core/internal.js';
+import { EventInput } from '@fullcalendar/core';
 
 export function overlapValidator(existingEvents: EventImpl[]): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const startDate = new Date(control.get('start')?.value);
     const endDate = new Date(control.get('end')?.value);
+    console.log(existingEvents);
 
     // Verifica se le date sono valide
     if (!startDate || !endDate) {
@@ -12,9 +14,7 @@ export function overlapValidator(existingEvents: EventImpl[]): ValidatorFn {
     }
 
     const isOverlapping = existingEvents?.some(event => {
-      const eventStart = event.start;
-      const eventEnd = event.end;
-      return (startDate < eventEnd! && endDate > eventStart!);
+      return (startDate < event.end! && endDate > event.start!);
     });
 
     return isOverlapping ? {overlapError: true} : null;

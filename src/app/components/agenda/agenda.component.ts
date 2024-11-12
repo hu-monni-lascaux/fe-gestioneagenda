@@ -43,19 +43,22 @@ export class AgendaComponent {
     const events = this.calendarComponent?.getApi().getEvents() || [];
 
     const dialogRef = this.#dialog.open(CreateAppointmentDialogComponent, {
-      data: {start: startDate, end: endDate, events: events},
+      data: {start: startDate, end: endDate, existingEvents: events},
     });
 
     dialogRef.afterClosed()
       .subscribe(result => {
-        if (result) {
-          this.calendarComponent?.getApi().addEvent({
+        this.calendarOptions.events = [
+          ...this.calendarOptions.events as EventInput[],
+          {
             title: result.title,
             start: result.start,
             end: result.end,
-            extendedProps: { text: result.text }
-          });
-        }
+            extendedProps: {
+              text: result.text
+            }
+          }
+        ];
       });
   }
 
