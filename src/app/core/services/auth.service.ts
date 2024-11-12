@@ -9,26 +9,21 @@ import {tap} from "rxjs";
 })
 export class AuthService {
     #token?: string;
-    #apiUrl: string = "http://localhost:8080/api/v1/auth"
+    #apiUrl: string = "http://localhost:8081/api/v1/auth"
 
     constructor(private http: HttpClient) {
     }
 
     doLogin(user: UserModel) {
-        this.loginRequest(user);
-    }
-
-    private loginRequest(user: UserModel) {
         const {username, password} = user;
 
-        this.http.post<{ jwtToken: string }>(`${this.#apiUrl}/authenticate`, {
+        return this.http.post<{ jwtToken: string }>(`${this.#apiUrl}/authenticate`, {
             username: username,
             password: password,
-        })
-            .subscribe(data => {
-                this.#token = data.jwtToken;
-                localStorage.setItem('token', this.#token);
-            });
+        }).pipe(
+            tap(data => localStorage.setItem('token', data.jwtToken)),
+            // catchError()
+        );
     }
 
     doRegister(user: UserModel) {
@@ -42,9 +37,9 @@ export class AuthService {
                 tap(data => localStorage.setItem('token', data.jwtToken)),
                 // catchError()
             );
-        // .subscribe(data => {
-        //     this.#token = data.jwtToken;
-        //     localStorage.setItem('token', this.#token);
-        // });
+    }
+
+    doLogout(): void {
+        localStorage.removeItem('token');
     }
 }

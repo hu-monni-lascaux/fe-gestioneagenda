@@ -26,7 +26,12 @@ export class LoginComponent {
             const user: UserModel = this.loginForm.value;
 
             // console.log(user);
-            this.#authService.doLogin(user);
+            this.#authService.doLogin(user)
+                .subscribe({
+                    next: result => {
+                        console.log(result);
+                    },
+                });
 
             this.loginForm.reset();
         }

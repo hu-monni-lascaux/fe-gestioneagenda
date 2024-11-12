@@ -1,39 +1,41 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserModel } from '../../core/models/user.model';
-import { AuthService } from '../../core/services/auth.service';
+import {Component, inject} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UserModel} from '../../core/models/user.model';
+import {AuthService} from '../../core/services/auth.service';
 
 @Component({
-  selector: 'app-registration',
-  templateUrl: './registration.component.html',
-  styleUrl: './registration.component.css'
+    selector: 'app-registration',
+    templateUrl: './registration.component.html',
+    styleUrl: './registration.component.css'
 })
 export class RegistrationComponent {
-  #formBuilder = inject(FormBuilder);
-  #authService = inject(AuthService);
+    #formBuilder = inject(FormBuilder);
+    #authService = inject(AuthService);
 
-  registrationForm: FormGroup;
+    registrationForm: FormGroup;
 
-  constructor() {
-    this.registrationForm = this.#formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(5)]],
-    });
-  }
-
-
-  onSubmit() {
-    if(this.registrationForm.valid){
-      const user: UserModel = this.registrationForm.value;
-
-      //todo: test here
-      this.#authService.doRegister(user)
-        .subscribe({
-          next: result => { console.log(result); },
+    constructor() {
+        this.registrationForm = this.#formBuilder.group({
+            username: ['', [Validators.required, Validators.minLength(3)]],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, Validators.minLength(5)]],
         });
-
-      this.registrationForm.reset();
     }
-  }
+
+
+    onSubmit() {
+        if (this.registrationForm.valid) {
+            const user: UserModel = this.registrationForm.value;
+
+            //todo: test here
+            this.#authService.doRegister(user)
+                .subscribe({
+                    next: result => {
+                        console.log(result);
+                    },
+                });
+
+            this.registrationForm.reset();
+        }
+    }
 }
