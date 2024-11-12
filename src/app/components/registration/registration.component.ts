@@ -2,6 +2,7 @@ import {Component, inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserModel} from '../../core/models/user.model';
 import {AuthService} from '../../core/services/auth.service';
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-registration',
@@ -11,6 +12,7 @@ import {AuthService} from '../../core/services/auth.service';
 export class RegistrationComponent {
     #formBuilder = inject(FormBuilder);
     #authService = inject(AuthService);
+    #router = inject(Router);
 
     registrationForm: FormGroup;
 
@@ -33,6 +35,9 @@ export class RegistrationComponent {
                     next: result => {
                         console.log(result);
                     },
+                    error: err => {
+                        this.#router.navigate(['errorPage']);
+                    }
                 });
 
             this.registrationForm.reset();

@@ -2,6 +2,7 @@ import {Component, inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserModel} from '../../core/models/user.model';
 import {AuthService} from '../../core/services/auth.service';
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-login',
@@ -11,6 +12,7 @@ import {AuthService} from '../../core/services/auth.service';
 export class LoginComponent {
     #formBuilder = inject(FormBuilder);
     #authService = inject(AuthService);
+    #router = inject(Router);
 
     loginForm: FormGroup;
 
@@ -31,6 +33,9 @@ export class LoginComponent {
                     next: result => {
                         console.log(result);
                     },
+                    error: err => {
+                        this.#router.navigate(['errorPage']);
+                    }
                 });
 
             this.loginForm.reset();

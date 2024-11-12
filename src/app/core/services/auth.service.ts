@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {UserModel} from '../models/user.model';
 import {HttpClient} from '@angular/common/http';
-import {Role} from '../models/enums/roles';
-import {tap} from "rxjs";
+import {catchError, tap, throwError} from "rxjs";
+import {jwtDecode} from "jwt-decode";
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +22,7 @@ export class AuthService {
             password: password,
         }).pipe(
             tap(data => localStorage.setItem('token', data.jwtToken)),
-            // catchError()
+            catchError(this.handleError)
         );
     }
 
@@ -35,11 +35,35 @@ export class AuthService {
         })
             .pipe(
                 tap(data => localStorage.setItem('token', data.jwtToken)),
-                // catchError()
+                catchError(this.handleError)
             );
     }
 
     doLogout(): void {
         localStorage.removeItem('token');
+    }
+
+    isTokenExpired() {
+        const token = this.getToken();
+        if (!token) {
+            return true;
+        }
+
+        const decoded: { exp: number } = jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        return decoded.exp < currentTime;
+    }
+
+    isAuthenticated(): boolean {
+        const token = this.getToken();
+        return !!token && !this.isTokenExpired(); // la doppia negazione converte il token in boolean
+    }
+
+    private getToken() {
+        return localStorage.getItem('token');
+    }
+
+    private handleError() {
+        return throwError(() => new Error('Errore di autenticazione, riprova più tardi.'));
     }
 }
