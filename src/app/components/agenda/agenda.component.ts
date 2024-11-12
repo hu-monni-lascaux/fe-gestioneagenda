@@ -66,5 +66,6 @@ export class AgendaComponent {
   private handleEventClick(info: EventClickArg) {
     const event = info.event;
     console.log('Event clicked:', event.title, event.start, event.extendedProps[ 'text' ]);
+    // TODO: do something here
   }
 }

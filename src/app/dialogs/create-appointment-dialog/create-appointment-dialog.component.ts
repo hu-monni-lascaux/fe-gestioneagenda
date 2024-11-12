@@ -26,6 +26,10 @@ export class CreateAppointmentDialogComponent {
       {validators: overlapValidator(this.data.existingEvents)});
 
     this.form.controls[ 'end' ].setValidators([Validators.required, endValidator(this.form.controls[ 'start' ])]);
+    this.form.controls[ 'end' ].updateValueAndValidity();
+    this.form.controls[ 'start' ].valueChanges.subscribe(() => {
+      this.form.controls[ 'end' ].updateValueAndValidity();
+    });
   }
 
   onSave() {
