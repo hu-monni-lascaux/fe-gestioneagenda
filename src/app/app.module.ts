@@ -9,12 +9,18 @@ import { MaterialModule } from './material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
+import { HomepageComponent } from './components/homepage/homepage.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegistrationComponent,
+    ErrorPageComponent,
+    HomepageComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
