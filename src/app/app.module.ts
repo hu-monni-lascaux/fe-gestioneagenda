@@ -12,6 +12,8 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { ErrorPageComponent } from './components/error-page/error-page.component';
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { AboutComponent } from './components/about/about.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     ErrorPageComponent,
     HomepageComponent,
     NavbarComponent,
+    AboutComponent,
+    ContactComponent,
   ],
   imports: [
     BrowserModule,
