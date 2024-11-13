@@ -20,7 +20,7 @@ export class AgendaService {
   getAgendas() {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.#tokenJwt}`
-    })
+    });
     return this.#http.get(`${this.#url}`, {
       headers: headers,
     }).pipe(
