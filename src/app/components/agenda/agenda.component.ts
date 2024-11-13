@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CalendarOptions, EventClickArg, EventInput } from '@fullcalendar/core';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -15,7 +15,7 @@ import moment from 'moment';
   templateUrl: './agenda.component.html',
   styleUrl: './agenda.component.css'
 })
-export class AgendaComponent {
+export class AgendaComponent implements OnInit {
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
   #dialog = inject(MatDialog);
 
@@ -38,7 +38,7 @@ export class AgendaComponent {
 
   private handleDateClick(arg: DateClickArg) {
     // hardcoded default, fix here
-    const startDate = moment(arg.dateStr).set({ hour: 12, minute: 0 }).format('YYYY-MM-DDTHH:mm');
+    const startDate = moment(arg.dateStr).set({hour: 12, minute: 0}).format('YYYY-MM-DDTHH:mm');
     const endDate = moment(startDate).add(15, "minutes").format('YYYY-MM-DDTHH:mm');
 
     const events = this.calendarComponent?.getApi().getEvents() || [];
@@ -49,17 +49,16 @@ export class AgendaComponent {
 
     dialogRef.afterClosed()
       .subscribe(result => {
-        this.calendarOptions.events = [
-          ...this.calendarOptions.events as EventInput[],
-          {
+        if (result) {
+          this.calendarComponent?.getApi().addEvent({
             title: result.title,
             start: result.start,
             end: result.end,
             extendedProps: {
               text: result.text
             }
-          }
-        ];
+          });
+        }
       });
   }
 
@@ -67,5 +66,13 @@ export class AgendaComponent {
     const event = info.event;
     console.log('Event clicked:', event.title, event.start, event.extendedProps[ 'text' ]);
     // TODO: do something here
+  }
+
+  ngOnInit() {
+    /*
+    * Implementare inizializzazione di calendarOptions recuperando dal db le opzioni e gli eventi,
+    * magari farsi passare l'id
+    * */
+    console.log("LEGGI COMMENTI");
   }
 }

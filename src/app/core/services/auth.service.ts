@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 export class AuthService {
 
   #tokenKey: string = 'token';
-  #apiUrl: string = "http://localhost:8081/api/v1/auth";
+  #apiUrl: string = "http://localhost:8080/api/v1/auth";
   #userLogged: string = '';
 
   constructor(private http: HttpClient) {

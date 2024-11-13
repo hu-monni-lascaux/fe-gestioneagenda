@@ -1,5 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AgendaService } from '../../core/services/agenda.service';
+import { AgendaModel } from '../../core/models/agenda.model';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-my-agendas',
@@ -8,19 +11,28 @@ import { AgendaService } from '../../core/services/agenda.service';
 })
 export class MyAgendasComponent implements OnInit {
   #agendaService = inject(AgendaService);
-  agendas = []
+  #router = inject(Router);
 
-  onClick(){
-    throw new Error('Method not implemented.');
+  // TODO: inizializzazione di prova da eliminare
+  agendas: AgendaModel[] = [{
+    id: 1,
+    user: 'pippo',
+    name: 'pippos_agenda',
+    appointments: [],
+    maxAppointmentTime: new Date('11:50'),
+    serviceHours: []
+  }]
+
+  onClick(id: number) {
+    this.#router.navigate([`agendas/${id}`]);
   }
-
 
 
   createAgenda() {
     throw new Error('Method not implemented.');
   }
 
-  ngOnInit(){
-
+  ngOnInit() {
+    this.#agendaService.getAgendas().subscribe(res => this.agendas = res);
   }
 }
