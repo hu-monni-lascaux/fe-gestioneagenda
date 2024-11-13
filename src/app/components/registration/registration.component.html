@@ -23,7 +23,9 @@
           <mat-error *ngIf="registrationForm.get('password')?.invalid">Password richiesta</mat-error>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="registrationForm.invalid">
+        <button type="button" style="margin-top: 3px; margin-bottom: 3px" mat-button class="small-button" (click)="loginBtn()">Hai già un account?</button>
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="registrationForm.invalid">
           Sign Up
         </button>
       </form>

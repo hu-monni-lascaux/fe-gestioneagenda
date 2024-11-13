@@ -32,14 +32,18 @@ export class RegistrationComponent {
       this.#authService.doRegister(user)
         .subscribe({
           next: result => {
+            this.registrationForm.reset();
             this.#router.navigate(["home"])
           },
           error: err => {
+            console.log("sono stato qui")
             this.#router.navigate(['errorPage']);
           }
         });
-
-      this.registrationForm.reset();
     }
+  }
+
+  loginBtn() {
+    this.#router.navigate(['login']);
   }
 }
