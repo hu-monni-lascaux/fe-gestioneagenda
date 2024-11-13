@@ -1,10 +1,9 @@
-import { AgendaModel } from './agenda.model';
 import { Day } from './enums/days';
 
 export interface ServiceHourModel {
-  id: number;
+  id?: number;
   day: Day;
   start: Date;
   end: Date;
-  agenda: AgendaModel
+  agenda?: number
 }
