@@ -13,12 +13,11 @@ export class AgendaService {
   #serviceHourUrl = "http://localhost:8080/api/v1/service-hour";
   #http = inject(HttpClient);
   #auth = inject(AuthService);
-  #headers: HttpHeaders;
-  readonly #tokenJwt: string;
+  #headers: HttpHeaders = new HttpHeaders();
+  #tokenJwt: string = "";
 
   constructor() {
-    this.#tokenJwt = this.#auth.getToken() || '';
-    this.#headers = new HttpHeaders({'Authorization': `Bearer ${this.#tokenJwt}`});
+
   }
 
   // TODO: metodo da testare
@@ -36,20 +35,33 @@ export class AgendaService {
 
   // generare agenda -> avere id indietro -> generare i service hours
   createAgenda(dataAgenda: AgendaModel) {
-    dataAgenda.user = this.#auth.userLogged;
-    return this.#http.post<AgendaModel>(`${this.#agendaUrl}/`, {
-      headers: this.#headers,
-      body: {...dataAgenda}
-    }).pipe(
+    this.updateToken();
+    dataAgenda.username = this.#auth.userLogged;
+    return this.#http.post<AgendaModel>(`${this.#agendaUrl}/`,
+      dataAgenda,
+      {
+        headers: this.#headers,
+      }
+    ).pipe(
       tap(res => console.log(res))
     );
   }
 
   createServiceHour(serviceHour: ServiceHourModel) {
-    return this.#http.post<ServiceHourModel>(`${this.#agendaUrl}/`, {
-      headers: this.#headers,
-      body: {...serviceHour}
-    }).pipe(tap(res => console.log(res)));
+    this.updateToken();
+
+
+    return this.#http.post<ServiceHourModel>(`${this.#serviceHourUrl}`,
+      serviceHour,
+      {
+        headers: this.#headers
+      }
+    ).pipe(tap(res => console.log(res)));
+  }
+
+  private updateToken(): void {
+    this.#tokenJwt = this.#auth.getToken() || '';
+    this.#headers = new HttpHeaders({'Authorization': `Bearer ${this.#tokenJwt}`});
   }
 
   convertDayToEnglish(day: string): string {

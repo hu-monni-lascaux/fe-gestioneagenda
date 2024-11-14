@@ -17,7 +17,7 @@ export class AuthService {
   }
 
   get userLogged(): string {
-    return this.#userLogged;
+    return localStorage.getItem("username") || "" ;
   }
 
   getUserData(): UserModel | null {
@@ -38,7 +38,7 @@ export class AuthService {
     }).pipe(
       tap(data => {
         localStorage.setItem(this.#tokenKey, data.jwtToken);
-        this.#userLogged = username;
+        localStorage.setItem("username", username);
       }),
       catchError(this.handleError)
     );
@@ -54,7 +54,7 @@ export class AuthService {
       .pipe(
         tap(data => {
           localStorage.setItem(this.#tokenKey, data.jwtToken);
-          this.#userLogged = username;
+          localStorage.setItem("username", username);
         }),
         catchError(this.handleError)
       );

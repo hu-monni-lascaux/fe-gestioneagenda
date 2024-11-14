@@ -5,7 +5,7 @@ export interface AgendaModel {
   id?: number;
   name: string;
   maxAppointmentTime: string;
-  user?: string;
+  username?: string;
   appointments?: AppointmentModel[];
   serviceHours?: ServiceHourModel[];
 }

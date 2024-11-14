@@ -22,7 +22,7 @@ export class MyAgendasComponent implements OnInit {
   // TODO: inizializzazione di prova da eliminare
   agendas: AgendaModel[] = [{
     id: 1,
-    user: 'pippo',
+    username: 'pippo',
     name: 'pippos_agenda',
     appointments: [],
     maxAppointmentTime: "PT15M",
@@ -42,10 +42,15 @@ export class MyAgendasComponent implements OnInit {
         this.#agendaService.createAgenda({
           maxAppointmentTime,
           name: result[ 'name' ],
-        }).subscribe(res => {
-          if (res.id) {
-            id = res.id!;
-            this.createServiceHour(result, id);
+        }).subscribe({
+          next: (res: any) => {
+            if (res.id) {
+              id = res.id!;
+              this.createServiceHour(result, id);
+            }
+          },
+          error: err => {
+            console.log(err);
           }
         });
       }
@@ -60,14 +65,14 @@ export class MyAgendasComponent implements OnInit {
       if (Array.isArray(result[ key ]) && result[ key ].length > 0) {
         result[ key ].forEach((value) => {
           let [start, end] = value.split('-');
-          start = moment(start, 'HH:mm').toDate();
-          end = moment(end, 'HH:mm').toDate();
+          // start = moment(start, 'HH:mm').toDate();
+          // end = moment(end, 'HH:mm').toDate();
           const serviceHour: ServiceHourModel = {
             // day: Day[ key.toUpperCase() as keyof typeof Day ],
             day: this.#agendaService.convertDayToEnglish(key),
             start: start,
             end: end,
-            id: id,
+            agendaID: id,
           }
 
           this.#agendaService.createServiceHour(serviceHour)
