@@ -73,10 +73,10 @@ export class MyAgendasComponent implements OnInit {
             agendaID: id,
           }
 
-          this.#agendaService.createServiceHour(serviceHour)
-            .subscribe(res => {
-              this.#router.navigate([`agendas/${id}`]);
-            })
+          // this.#agendaService.createServiceHour(serviceHour)
+          //   .subscribe(res => {
+          //     this.#router.navigate([`agendas/${id}`]);
+          //   })
         });
       }
     }

@@ -39,7 +39,7 @@ export class AgendaService {
         return this.#http.get<AgendaModel>(`${this.#agendaUrl}/id/${id}`,
             {headers: this.#headers}
         ).pipe(
-            tap(res => console.log("get agenda by id: " + res)),
+            tap(res => console.log("get agenda by id: " + res.id)),
         );
     }
 
@@ -71,7 +71,7 @@ export class AgendaService {
     createAgenda(dataAgenda: AgendaModel) {
         this.updateToken();
         dataAgenda.username = this.#auth.userLogged;
-        return this.#http.post<AgendaModel>(`${this.#agendaUrl}/`,
+        return this.#http.post<AgendaModel>(`${this.#agendaUrl}`,
             dataAgenda,
             {
                 headers: this.#headers,

@@ -1,7 +1,9 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { CalendarOptions, EventClickArg, EventInput } from '@fullcalendar/core';
+import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
+import {Calendar} from '@fullcalendar/core';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,13 +12,11 @@ import {
 } from '../../dialogs/create-appointment-dialog/create-appointment-dialog.component';
 import moment from 'moment';
 import { AgendaService } from '../../core/services/agenda.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, map, Subscription, switchMap, take } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin, map, Subscription, switchMap } from 'rxjs';
 import { BusinessHoursModel } from '../../core/models/business-hours.model';
-import { Day } from '../../core/models/enums/days';
 import { ServiceHourModel } from '../../core/models/service-hour.model';
 import { AppointmentModel } from '../../core/models/appointment.model';
-import { EventImpl } from '@fullcalendar/core/internal.js';
 
 interface Data {
   serviceHours: ServiceHourModel[];
@@ -37,23 +37,22 @@ export class AgendaComponent implements OnInit {
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
   #dialog = inject(MatDialog);
 
-  calendarOptions: CalendarOptions | undefined;
-  // calendarOptions: CalendarOptions = {
-  //   initialView: 'dayGridWeek',
-  //   plugins: [dayGridPlugin, interactionPlugin],
-  //   events: [
-  //     // {title: 'event 1', date: '2024-11-12', text: "This is event 1"},
-  //   ],
-  //   locale: 'it',
-  //   eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //     hour12: false
-  //   },
-  //   displayEventEnd: true,
-  //   dateClick: (arg) => this.handleDateClick(arg),
-  //   eventClick: (info) => this.handleEventClick(info),
-  // };
+  calendarOptions: CalendarOptions = {
+    initialView: 'timeGridWeek',
+    // initialView: 'dayGridWeek',
+
+    plugins: [interactionPlugin, timeGridPlugin],
+    events: [],
+    locale: 'it',
+    eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    },
+    displayEventEnd: true,
+    dateClick: (arg) => this.handleDateClick(arg),
+    eventClick: (info) => this.handleEventClick(info),
+  };
 
   private handleDateClick(arg: DateClickArg) {
     // hardcoded default, fix here
@@ -132,21 +131,7 @@ export class AgendaComponent implements OnInit {
             });
           });
 
-          this.calendarOptions = {
-            initialView: 'dayGridWeek',
-            plugins: [dayGridPlugin, interactionPlugin],
-            events: [],
-            locale: 'it',
-            eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            },
-            displayEventEnd: true,
-            dateClick: (arg) => this.handleDateClick(arg),
-            eventClick: (info) => this.handleEventClick(info),
-            businessHours: businessHours,
-          };
+          this.calendarOptions.businessHours = businessHours;
 
           appointments.forEach(appointment =>
             this.calendarComponent?.getApi().addEvent({

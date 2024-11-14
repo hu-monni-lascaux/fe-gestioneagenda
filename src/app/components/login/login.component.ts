@@ -31,14 +31,14 @@ export class LoginComponent {
             this.#authService.doLogin(user)
                 .subscribe({
                     next: result => {
-                        console.log(result);
+                        this.#router.navigate(['agendas']);
                     },
                     error: err => {
                         this.#router.navigate(['errorPage']);
                     }
                 });
 
-            this.loginForm.reset();
+            // this.loginForm.reset();
         }
     }
 
