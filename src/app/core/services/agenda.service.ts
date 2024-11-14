@@ -22,6 +22,8 @@ export class AgendaService {
 
   // TODO: metodo da testare
   getAgendas() {
+    this.updateToken();
+
     return this.#http.get<AgendaModel[]>(`${this.#agendaUrl}`, {
       headers: this.#headers,
     }).pipe(
