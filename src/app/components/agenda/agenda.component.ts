@@ -9,6 +9,19 @@ import {
   CreateAppointmentDialogComponent
 } from '../../dialogs/create-appointment-dialog/create-appointment-dialog.component';
 import moment from 'moment';
+import { AgendaService } from '../../core/services/agenda.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, map, Subscription, switchMap, take } from 'rxjs';
+import { BusinessHoursModel } from '../../core/models/business-hours.model';
+import { Day } from '../../core/models/enums/days';
+import { ServiceHourModel } from '../../core/models/service-hour.model';
+import { AppointmentModel } from '../../core/models/appointment.model';
+import { EventImpl } from '@fullcalendar/core/internal.js';
+
+interface Data {
+  serviceHours: ServiceHourModel[];
+  appointments: AppointmentModel[];
+}
 
 @Component({
   selector: 'app-agenda',
@@ -16,25 +29,31 @@ import moment from 'moment';
   styleUrl: './agenda.component.css'
 })
 export class AgendaComponent implements OnInit {
+  #agendaService = inject(AgendaService);
+  #router = inject(ActivatedRoute);
+  #param: any;
+  #subscription = new Subscription();
+
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
   #dialog = inject(MatDialog);
 
-  calendarOptions: CalendarOptions = {
-    initialView: 'dayGridWeek',
-    plugins: [dayGridPlugin, interactionPlugin],
-    events: [
-      // {title: 'event 1', date: '2024-11-12', text: "This is event 1"},
-    ],
-    locale: 'it',
-    eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    },
-    displayEventEnd: true,
-    dateClick: (arg) => this.handleDateClick(arg),
-    eventClick: (info) => this.handleEventClick(info),
-  };
+  calendarOptions: CalendarOptions | undefined;
+  // calendarOptions: CalendarOptions = {
+  //   initialView: 'dayGridWeek',
+  //   plugins: [dayGridPlugin, interactionPlugin],
+  //   events: [
+  //     // {title: 'event 1', date: '2024-11-12', text: "This is event 1"},
+  //   ],
+  //   locale: 'it',
+  //   eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     hour12: false
+  //   },
+  //   displayEventEnd: true,
+  //   dateClick: (arg) => this.handleDateClick(arg),
+  //   eventClick: (info) => this.handleEventClick(info),
+  // };
 
   private handleDateClick(arg: DateClickArg) {
     // hardcoded default, fix here
@@ -64,15 +83,89 @@ export class AgendaComponent implements OnInit {
 
   private handleEventClick(info: EventClickArg) {
     const event = info.event;
-    console.log('Event clicked:', event.title, event.start, event.extendedProps[ 'text' ]);
+    console.log('Event clicked:', event.title, event.start, event.extendedProps['text']);
     // TODO: do something here
   }
 
+  private convertDay(day: string) {
+    const dayMap: { [key: string]: number } = {
+      'sunday': 0,
+      'monday': 1,
+      'tuesday': 2,
+      'wednesday': 3,
+      'thursday': 4,
+      'friday': 5,
+      'saturday': 6
+    };
+    const dayLowerCase = day.toLowerCase();
+    return dayMap[dayLowerCase];
+  }
+
   ngOnInit() {
-    /*
-    * Implementare inizializzazione di calendarOptions recuperando dal db le opzioni e gli eventi,
-    * magari farsi passare l'id
-    * */
-    console.log("LEGGI COMMENTI");
+    this.#subscription.add(
+      this.#router.params.pipe(
+        switchMap(params => {
+          const id = params['id'];
+          return this.#agendaService.getExistingAgenda(id).pipe(
+            switchMap(agenda =>
+              forkJoin({
+                serviceHours: this.#agendaService.getServiceHoursByAgenda(agenda.id!),
+                appointments: this.#agendaService.getAppointmentsByAgenda(agenda.id!),
+              }).pipe(
+                map(({serviceHours, appointments}) => ({
+                  serviceHours,
+                  appointments
+                }) as Data)
+              )
+            )
+          );
+        })
+      ).subscribe({
+        next: ({serviceHours, appointments}: Data) => {
+          let businessHours: BusinessHoursModel[] = [];
+
+          serviceHours.forEach(sh => {
+            businessHours.push({
+              daysOfWeek: [this.convertDay(sh.day)],
+              startTime: sh.start as string,
+              endTime: sh.end as string,
+            });
+          });
+
+          this.calendarOptions = {
+            initialView: 'dayGridWeek',
+            plugins: [dayGridPlugin, interactionPlugin],
+            events: [],
+            locale: 'it',
+            eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            },
+            displayEventEnd: true,
+            dateClick: (arg) => this.handleDateClick(arg),
+            eventClick: (info) => this.handleEventClick(info),
+            businessHours: businessHours,
+          };
+
+          appointments.forEach(appointment =>
+            this.calendarComponent?.getApi().addEvent({
+              title: appointment.title,
+              start: appointment.start,
+              end: appointment.end,
+              extendedProps: {
+                text: appointment.text
+              }
+            }))
+        },
+        error: (err) => {
+          console.error('Error occurred:', err);
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.#subscription.unsubscribe();
   }
 }

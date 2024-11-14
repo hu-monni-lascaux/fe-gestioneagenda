@@ -24,9 +24,7 @@ export class MyAgendasComponent implements OnInit {
     id: 1,
     username: 'pippo',
     name: 'pippos_agenda',
-    appointments: [],
     maxAppointmentTime: "PT15M",
-    serviceHours: []
   }]
 
   onClick(id: number) {
