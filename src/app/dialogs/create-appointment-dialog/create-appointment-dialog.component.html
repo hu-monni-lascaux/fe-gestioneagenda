@@ -1,0 +1,30 @@
+<!--<h2 mat-dialog-title>{{ data ? 'Edit Event' : 'Create Event' }}</h2>-->
+<h2 mat-dialog-title>Create Event</h2>
+<form [formGroup]="form" (ngSubmit)="onSave()">
+  <mat-dialog-content class="content">
+    <mat-form-field>
+      <mat-label>Event Title</mat-label>
+      <input matInput formControlName="title">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Start Date & Time</mat-label>
+      <input matInput formControlName="start" type="datetime-local">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>End Date & Time</mat-label>
+      <input matInput formControlName="end" type="datetime-local">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="text" rows="3"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-button type="submit" [disabled]="!form.valid">Save</button>
+  </mat-dialog-actions>
+</form>

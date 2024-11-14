@@ -8,10 +8,25 @@ import { jwtDecode } from "jwt-decode";
   providedIn: 'root'
 })
 export class AuthService {
-  #token?: string;
-  #apiUrl: string = "http://localhost:8080/api/v1/auth"
+
+  #tokenKey: string = 'token';
+  #apiUrl: string = "http://localhost:8080/api/v1/auth";
+  #userLogged: string = '';
 
   constructor(private http: HttpClient) {
+  }
+
+  get userLogged(): string {
+    return localStorage.getItem("username") || "" ;
+  }
+
+  getUserData(): UserModel | null {
+    const token = localStorage.getItem(this.#tokenKey);
+    if (token) {
+      const decoded: any = jwtDecode(this.#tokenKey);
+      return decoded.user as UserModel;
+    }
+    return null;
   }
 
   doLogin(user: UserModel) {
@@ -21,7 +36,10 @@ export class AuthService {
       username: username,
       password: password,
     }).pipe(
-      tap(data => localStorage.setItem('token', data.jwtToken)),
+      tap(data => {
+        localStorage.setItem(this.#tokenKey, data.jwtToken);
+        localStorage.setItem("username", username);
+      }),
       catchError(this.handleError)
     );
   }
@@ -34,18 +52,23 @@ export class AuthService {
       email: email,
     })
       .pipe(
-        tap(data => localStorage.setItem('token', data.jwtToken)),
+        tap(data => {
+          localStorage.setItem(this.#tokenKey, data.jwtToken);
+          localStorage.setItem("username", username);
+        }),
         catchError(this.handleError)
       );
   }
 
   doLogout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem(this.#tokenKey);
+    this.#userLogged = '';
   }
 
   isTokenExpired() {
     const token = this.getToken();
     if (!token) {
+      this.#userLogged = '';
       return true;
     }
 
@@ -59,8 +82,8 @@ export class AuthService {
     return !!token && !this.isTokenExpired(); // la doppia negazione converte il token in boolean
   }
 
-  private getToken() {
-    return localStorage.getItem('token');
+  getToken() {
+    return localStorage.getItem(this.#tokenKey);
   }
 
   private handleError() {
