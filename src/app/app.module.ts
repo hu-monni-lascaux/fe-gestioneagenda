@@ -17,6 +17,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { AgendaComponent } from './components/agenda/agenda.component';
 import { CreateAppointmentDialogComponent } from './dialogs/create-appointment-dialog/create-appointment-dialog.component';
 import { TimeSlotDialogComponent } from './dialogs/time-slot-dialog/time-slot-dialog.component';
+import { AgendeComponent } from './components/agende/agende.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { TimeSlotDialogComponent } from './dialogs/time-slot-dialog/time-slot-di
     AgendaComponent,
     CreateAppointmentDialogComponent,
     TimeSlotDialogComponent,
+    AgendeComponent,
   ],
   imports: [
     BrowserModule,

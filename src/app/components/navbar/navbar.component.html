@@ -1,7 +1,13 @@
 <mat-toolbar color="primary">
   <button mat-button routerLink="/home">Home</button>
-  <button mat-button routerLink="/about">About</button>
-  <button mat-button routerLink="/contact" class="right-margin">Contact</button>
+  <button mat-button routerLink="/agende">Agende</button>
+  @if (localStorage.getItem('token')) {
+    <button mat-button routerLink="/mie-agende" class="right-margin">Mie agende</button>
+  }
   <span class="spacer"></span>
-  <button mat-flat-button routerLink="/register" class="right-margin">Sign Up</button>
+  @if (!localStorage.getItem('token')) {
+    <button mat-flat-button routerLink="/register" class="right-margin">Sign Up</button>
+  } @else {
+    <button mat-flat-button routerLink="/login" class="right-margin" (click)="logout()" >Logout</button>
+  }
 </mat-toolbar>
