@@ -22,6 +22,8 @@ export class AgendaService {
 
   // TODO: metodo da testare
   getAgendas() {
+    this.updateToken();
+
     return this.#http.get<AgendaModel[]>(`${this.#agendaUrl}`, {
       headers: this.#headers,
     }).pipe(
@@ -37,7 +39,7 @@ export class AgendaService {
   createAgenda(dataAgenda: AgendaModel) {
     this.updateToken();
     dataAgenda.username = this.#auth.userLogged;
-    return this.#http.post<AgendaModel>(`${this.#agendaUrl}/`,
+    return this.#http.post<AgendaModel>(`${this.#agendaUrl}`,
       dataAgenda,
       {
         headers: this.#headers,
