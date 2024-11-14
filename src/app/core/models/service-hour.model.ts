@@ -2,7 +2,7 @@ import { Day } from './enums/days';
 
 export interface ServiceHourModel {
   id?: number;
-  day: Day;
+  day: string;
   start: Date;
   end: Date;
   agenda?: number

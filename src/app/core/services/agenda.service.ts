@@ -52,4 +52,18 @@ export class AgendaService {
     }).pipe(tap(res => console.log(res)));
   }
 
+  convertDayToEnglish(day: string): string {
+    const daysMap: { [ key: string ]: string } = {
+      "LUNEDI": "MONDAY",
+      "MARTEDI": "TUESDAY",
+      "MERCOLEDI": "WEDNESDAY",
+      "GIOVEDI": "THURSDAY",
+      "VENERDI": "FRIDAY",
+      "SABATO": "SATURDAY",
+      "DOMENICA": "SUNDAY"
+    };
+
+    const uppercasedDay = day.toUpperCase();
+    return daysMap[ uppercasedDay ];
+  }
 }
