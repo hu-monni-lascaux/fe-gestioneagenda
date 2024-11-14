@@ -79,8 +79,6 @@ export class MyAgendasComponent implements OnInit {
     }
   }
 
-// private get
-
   ngOnInit() {
     this.#agendaService.getAgendas().subscribe(res => this.agendas = res);
   }
