@@ -76,6 +76,8 @@ export class AgendaComponent implements OnInit {
               text: result.text
             }
           });
+
+          // TODO: salvare appointments sul db
         }
       });
   }

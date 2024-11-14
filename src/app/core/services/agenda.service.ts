@@ -59,7 +59,7 @@ export class AgendaService {
         return this.#http.get<AppointmentModel[]>(`${this.#appointmentUrl}/agenda/${id}`,
             {headers: this.#headers}
         ).pipe(
-            tap(res => console.log("get service hour by id (list expected): " + res))
+            tap(res => console.log("get appointments by id (list expected): " + res))
         );
     }
 
