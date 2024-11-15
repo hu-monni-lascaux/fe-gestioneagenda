@@ -6,15 +6,40 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { MyAgendasComponent } from './components/my-agendas/my-agendas.component';
 import { AgendaComponent } from './components/agenda/agenda.component';
+import { AuthGuardService } from './core/services/auth-guard.service';
 
 const routes: Routes = [
-  {path: '', redirectTo: 'home', pathMatch: 'full'},
-  {path: 'home', component: HomepageComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'register', component: RegistrationComponent},
-  {path: 'errorPage', component: ErrorPageComponent},
-  {path: 'agendas', component: MyAgendasComponent},
-  {path: 'agendas/:id', component: AgendaComponent},
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'home',
+    component: HomepageComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'register',
+    component: RegistrationComponent
+  },
+  {
+    path: 'errorPage',
+    component: ErrorPageComponent
+  },
+  {
+    path: 'agendas',
+    component: MyAgendasComponent,
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: 'agendas/:id',
+    component: AgendaComponent,
+    canActivate: [AuthGuardService]
+  },
 ];
 
 @NgModule({
