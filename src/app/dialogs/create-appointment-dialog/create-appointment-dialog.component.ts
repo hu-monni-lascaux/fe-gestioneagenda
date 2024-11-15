@@ -5,6 +5,8 @@ import { startValidator } from '../../core/validators/start-validator';
 import { endValidator } from '../../core/validators/end-validator';
 import { overlapValidator } from '../../core/validators/overlap-validator';
 import { maxTimeValidator } from '../../core/validators/max-time.validator';
+import { AuthService } from '../../core/services/auth.service';
+import { AgendaService } from '../../core/services/agenda.service';
 
 @Component({
   selector: 'app-create-appointment-dialog',
@@ -14,6 +16,7 @@ import { maxTimeValidator } from '../../core/validators/max-time.validator';
 export class CreateAppointmentDialogComponent {
   #formBuilder = inject(FormBuilder);
   dialogRef = inject(MatDialogRef<CreateAppointmentDialogComponent>);
+  #agendaService = inject(AgendaService);
 
   form: FormGroup;
 
@@ -24,7 +27,7 @@ export class CreateAppointmentDialogComponent {
         start: [data.start, [Validators.required, startValidator()]],
         end: [data.end, Validators.required],
       },
-      {validators: [overlapValidator(this.data.existingEvents), maxTimeValidator()]});
+      {validators: [overlapValidator(this.data.existingEvents), maxTimeValidator(this.#agendaService.getMaxAppointmentTime())]});
 
     this.form.controls['end'].setValidators([Validators.required, endValidator(this.form.controls['start'])]);
     this.form.controls['end'].updateValueAndValidity();

@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-export function maxTimeValidator(): ValidatorFn {
+export function maxTimeValidator(max: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const startDate = new Date(control.get('start')?.value);
     const endDate = new Date(control.get('end')?.value);
@@ -13,6 +13,6 @@ export function maxTimeValidator(): ValidatorFn {
       console.log(differenceInMinutes);
     }
 
-    return differenceInMinutes > 15 ? {maxTimeExceeded: true} : null;
+    return differenceInMinutes > max ? {maxTimeExceeded: true} : null;
   }
 }
