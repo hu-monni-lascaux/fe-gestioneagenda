@@ -1,9 +1,9 @@
 export interface AppointmentModel {
-  id: number;
+  id?: number;
   title: string;
   text: string;
   start: Date;
   end: Date;
-  user: string;
-  agendaId: number;
+  username?: string;
+  agendaID: number;
 }

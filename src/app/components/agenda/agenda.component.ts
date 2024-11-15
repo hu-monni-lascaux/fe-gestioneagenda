@@ -1,51 +1,58 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { CalendarOptions, DateSelectArg, EventClickArg } from '@fullcalendar/core';
+import {AfterContentChecked, AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {CalendarOptions, DateSelectArg, EventClickArg} from '@fullcalendar/core';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import {Calendar} from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
-import { FullCalendarComponent } from '@fullcalendar/angular';
-import { MatDialog } from '@angular/material/dialog';
+import interactionPlugin, {DateClickArg} from '@fullcalendar/interaction';
+import {FullCalendarComponent} from '@fullcalendar/angular';
+import {MatDialog} from '@angular/material/dialog';
 import {
   CreateAppointmentDialogComponent
 } from '../../dialogs/create-appointment-dialog/create-appointment-dialog.component';
 import moment from 'moment';
-import { AgendaService } from '../../core/services/agenda.service';
-import { ActivatedRoute } from '@angular/router';
-import { forkJoin, map, Observable, of, Subscription, switchMap } from 'rxjs';
-import { BusinessHoursModel } from '../../core/models/business-hours.model';
-import { ServiceHourModel } from '../../core/models/service-hour.model';
-import { AppointmentModel } from '../../core/models/appointment.model';
+import {AgendaService} from '../../core/services/agenda.service';
+import {ActivatedRoute} from '@angular/router';
+import {forkJoin, map, Observable, of, Subscription, switchMap} from 'rxjs';
+import {BusinessHoursModel} from '../../core/models/business-hours.model';
+import {ServiceHourModel} from '../../core/models/service-hour.model';
+import {AppointmentModel} from '../../core/models/appointment.model';
+import {AuthService} from "../../core/services/auth.service";
 
 interface Data {
+  agendaId: number,
   serviceHours: ServiceHourModel[];
   appointments: AppointmentModel[];
   maxAppointmentTime: string
 }
+
+// interface AppointmentForkObject {
+//
+// }
 
 @Component({
   selector: 'app-agenda',
   templateUrl: './agenda.component.html',
   styleUrl: './agenda.component.css'
 })
-export class AgendaComponent implements OnInit {
+export class AgendaComponent implements OnInit, AfterViewInit, OnDestroy, AfterContentChecked {
   #agendaService = inject(AgendaService);
+  #authService = inject(AuthService);
   #router = inject(ActivatedRoute);
-  #param: any;
   #subscription = new Subscription();
 
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
   #dialog = inject(MatDialog);
 
+  #agendaId: number = 0;
   #maxAppointmentTime: number = 0;
+  #appointments: AppointmentModel[] = [];
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
     // initialView: 'dayGridWeek',
 
     plugins: [interactionPlugin, timeGridPlugin],
-    events: [],
     locale: 'it',
     eventTimeFormat: { // Formatta l'orario di inizio e fine dell'evento
       hour: '2-digit',
@@ -70,11 +77,8 @@ export class AgendaComponent implements OnInit {
 
   private handleDateClick(arg: DateSelectArg) {
     // hardcoded default, fix here
-    // const startDate = moment(arg.startStr).set({hour: 12, minute: 0}).format('YYYY-MM-DDTHH:mm');
-    // const endDate = moment(startDate).add(15, "minutes").format('YYYY-MM-DDTHH:mm');
     const startDate = moment(arg.start).format('YYYY-MM-DDTHH:mm');
     const endDate = moment(startDate).add(this.#maxAppointmentTime, 'minutes').format('YYYY-MM-DDTHH:mm');
-    // alert(startDate + " " + endDate);
 
     const events = this.calendarComponent?.getApi().getEvents() || [];
 
@@ -83,20 +87,30 @@ export class AgendaComponent implements OnInit {
     });
 
     dialogRef.afterClosed()
-      .subscribe(result => {
-        if (result) {
-          this.calendarComponent?.getApi().addEvent({
-            title: result.title,
-            start: result.start,
-            end: result.end,
-            extendedProps: {
-              text: result.text
+        .subscribe(result => {
+          if (result) {
+            const appointment = {
+              title: result.title,
+              start: result.start,
+              end: result.end,
+              extendedProps: {
+                text: result.text
+              }
             }
-          });
+            this.calendarComponent?.getApi().addEvent(appointment);
 
-          // TODO: salvare appointments sul db
-        }
-      });
+            // TODO: salvare appointments sul db
+            this.#agendaService.createAppointment({
+              title: appointment.title,
+              start: appointment.start,
+              end: appointment.end,
+              agendaID: this.#agendaId,
+              text: appointment.extendedProps.text,
+              username: this.#authService.userLogged,
+            }).subscribe(result => console.log(result));
+
+          }
+        });
   }
 
   private handleEventClick(info: EventClickArg) {
@@ -120,60 +134,84 @@ export class AgendaComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("sono stato qui di nuovo")
     this.#subscription.add(
-      this.#router.params.pipe(
-        switchMap(params => {
-          const id = params['id'];
-          return this.#agendaService.getExistingAgenda(id).pipe(
-            switchMap(agenda =>
-              forkJoin({
-                maxAppointmentTime: of(agenda.maxAppointmentTime),
-                serviceHours: this.#agendaService.getServiceHoursByAgenda(agenda.id!),
-                appointments: this.#agendaService.getAppointmentsByAgenda(agenda.id!),
-              }).pipe(
-                map(({serviceHours, appointments, maxAppointmentTime}) => ({
-                  serviceHours,
-                  appointments,
-                  maxAppointmentTime
-                }) as Data)
-              )
-            )
-          );
-        })
-      ).subscribe({
-        next: ({serviceHours, appointments, maxAppointmentTime}: Data) => {
-          let businessHours: BusinessHoursModel[] = [];
-
-          serviceHours.forEach(sh => {
-            businessHours.push({
-              daysOfWeek: [this.convertDay(sh.day)],
-              startTime: sh.start as string,
-              endTime: sh.end as string,
+        this.#router.params.pipe(
+            switchMap(params => {
+              const id = params['id'];
+              return this.#agendaService.getExistingAgenda(id).pipe(
+                  switchMap(agenda =>
+                      forkJoin({
+                        agendaId: of(agenda.id),
+                        maxAppointmentTime: of(agenda.maxAppointmentTime),
+                        serviceHours: this.#agendaService.getServiceHoursByAgenda(agenda.id!),
+                        appointments: this.#agendaService.getAppointmentsByAgenda(agenda.id!),
+                      }).pipe(
+                          map(({agendaId, serviceHours, appointments, maxAppointmentTime}) => ({
+                            agendaId,
+                            serviceHours,
+                            appointments,
+                            maxAppointmentTime
+                          }) as Data)
+                      )
+                  )
+              );
+            })
+        ).subscribe({
+          next: ({agendaId, serviceHours, appointments, maxAppointmentTime}: Data) => {
+            let businessHours: BusinessHoursModel[] = [];
+            serviceHours.forEach(sh => {
+              businessHours.push({
+                daysOfWeek: [this.convertDay(sh.day)],
+                startTime: sh.start as string,
+                endTime: sh.end as string,
+              });
             });
-          });
 
-          this.calendarOptions.businessHours = businessHours;
-          this.#maxAppointmentTime = Number(maxAppointmentTime.match(/\d+/));
-          localStorage.setItem(this.#agendaService.maxAppointmentTimeKey, this.#maxAppointmentTime.toString());
+            this.#agendaId = agendaId;
+            this.calendarOptions.businessHours = businessHours;
+            this.#maxAppointmentTime = Number(maxAppointmentTime.match(/\d+/));
+            localStorage.setItem(this.#agendaService.maxAppointmentTimeKey, this.#maxAppointmentTime.toString());
 
-          appointments.forEach(appointment =>
-            this.calendarComponent?.getApi().addEvent({
-              title: appointment.title,
-              start: appointment.start,
-              end: appointment.end,
-              extendedProps: {
-                text: appointment.text
-              }
-            }))
-        },
-        error: (err) => {
-          console.error('Error occurred:', err);
-        }
-      })
+            this.#appointments = [...appointments];
+            console.log("ON INIT: " + this.#appointments)
+
+            console.log(this.#appointments)
+            this.#appointments.forEach(appointment => {
+              console.log("Eccomi" + appointment.title);
+              this.calendarComponent?.getApi().addEvent({
+                title: appointment.title,
+                end: "2024-11-18T11:57",
+                startStr: new Date(appointment.start),
+                endStr: new Date(appointment.end),
+                start: "2024-11-18T11:56",
+                extendedProps: {
+                  text: appointment.text
+                }
+              })
+
+            });
+
+            console.log(this.calendarComponent?.getApi().getEvents());
+            this.calendarComponent?.getApi().render();
+          },
+          error: (err) => {
+            console.error('Error occurred:', err);
+          }
+        })
     );
+  }
+
+  ngAfterViewInit() {
+    // console.log("On after view init" + this.#appointments);
+
   }
 
   ngOnDestroy() {
     this.#subscription.unsubscribe();
+  }
+
+  ngAfterContentChecked(): void {
+
   }
 }

@@ -10,29 +10,29 @@ import { AppointmentModel } from '../models/appointment.model';
   providedIn: 'root'
 })
 export class AgendaService {
-    #agendaUrl = "http://localhost:8080/api/v1/agenda";
-    #serviceHourUrl = "http://localhost:8080/api/v1/service-hour";
-    #appointmentUrl = "http://localhost:8080/api/v1/appointment";
-    #http = inject(HttpClient);
-    #auth = inject(AuthService);
-    #headers: HttpHeaders = new HttpHeaders();
-    #tokenJwt: string = "";
-    #maxAppointmentTimeKey: string = 'maxAppointmentTime';
+  #agendaUrl = "http://localhost:8080/api/v1/agenda";
+  #serviceHourUrl = "http://localhost:8080/api/v1/service-hour";
+  #appointmentUrl = "http://localhost:8080/api/v1/appointment";
+  #http = inject(HttpClient);
+  #auth = inject(AuthService);
+  #headers: HttpHeaders = new HttpHeaders();
+  #tokenJwt: string = "";
+  #maxAppointmentTimeKey: string = 'maxAppointmentTime';
 
   constructor() {
 
   }
 
-    get maxAppointmentTimeKey(): string {
-        return this.#maxAppointmentTimeKey;
-    }
+  get maxAppointmentTimeKey(): string {
+    return this.#maxAppointmentTimeKey;
+  }
 
-    getMaxAppointmentTime(): number {
-        return Number(localStorage.getItem(this.#maxAppointmentTimeKey));
-    }
+  getMaxAppointmentTime(): number {
+    return Number(localStorage.getItem(this.#maxAppointmentTimeKey));
+  }
 
-    getAgendas() {
-        this.updateToken();
+  getAgendas() {
+    this.updateToken();
 
     return this.#http.get<AgendaModel[]>(`${this.#agendaUrl}`, {
       headers: this.#headers,
@@ -87,6 +87,15 @@ export class AgendaService {
     ).pipe(
       tap(res => console.log(res))
     );
+  }
+
+  createAppointment(appointment: AppointmentModel) {
+    this.updateToken();
+    console.log(appointment.agendaID)
+    return this.#http.post<AppointmentModel>(`${this.#appointmentUrl}`,
+      appointment,
+      {headers: this.#headers}
+    ).pipe(tap(res => console.log(res)))
   }
 
   createServiceHour(serviceHour: ServiceHourModel) {
