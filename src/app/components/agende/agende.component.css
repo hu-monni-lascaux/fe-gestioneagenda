@@ -12,4 +12,10 @@
 .agenda-card{
   min-width: 200px;
   max-width: 250px;
+
+}
+
+.agenda-card:hover {
+  background-color: #d3d3d3;
+
 }

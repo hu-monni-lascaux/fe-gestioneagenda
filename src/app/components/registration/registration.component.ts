@@ -33,7 +33,7 @@ export class RegistrationComponent {
         .subscribe({
           next: result => {
             this.registrationForm.reset();
-            this.#router.navigate(["home"])
+            this.#router.navigate(["agende"])
           },
           error: err => {
             console.log("sono stato qui")

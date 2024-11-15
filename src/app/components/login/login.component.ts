@@ -32,7 +32,7 @@ export class LoginComponent {
         .subscribe({
           next: result => {
             this.loginForm.reset();
-            this.#router.navigate(['home'])
+            this.#router.navigate(['agende'])
           },
           error: err => {
             this.#router.navigate(['errorPage']);

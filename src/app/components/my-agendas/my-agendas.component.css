@@ -7,11 +7,19 @@
   padding-left: 40px;
   padding-right: 40px;
   gap: 7px;
+
+
 }
 
 .agenda-card{
   min-width: 200px;
   max-width: 250px;
+
+}
+
+.agenda-card:hover {
+  background-color: #d3d3d3;
+
 }
 
 .new-agenda-container {
