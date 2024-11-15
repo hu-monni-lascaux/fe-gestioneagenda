@@ -1,10 +1,9 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {tap} from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import {AuthService} from './auth.service';
 import {AgendaModel} from '../models/agenda.model';
 import {ServiceHourModel} from '../models/service-hour.model';
-import {AppointmentModel} from "../models/appointment.model";
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +11,6 @@ import {AppointmentModel} from "../models/appointment.model";
 export class AgendaService {
     #agendaUrl = "http://localhost:8080/api/v1/agenda";
     #serviceHourUrl = "http://localhost:8080/api/v1/service-hour";
-    #appointmentUrl = "http://localhost:8080/api/v1/appointment";
     #http = inject(HttpClient);
     #auth = inject(AuthService);
     #headers: HttpHeaders = new HttpHeaders();
@@ -30,36 +28,6 @@ export class AgendaService {
             headers: this.#headers,
         }).pipe(
             tap(res => console.log(res))
-        );
-    }
-
-    getExistingAgenda(id: number) {
-        this.updateToken();
-
-        return this.#http.get<AgendaModel>(`${this.#agendaUrl}/id/${id}`,
-            {headers: this.#headers}
-        ).pipe(
-            tap(res => console.log("get agenda by id: " + res.id)),
-        );
-    }
-
-    getServiceHoursByAgenda(id: number) {
-        this.updateToken();
-
-        return this.#http.get<ServiceHourModel[]>(`${this.#serviceHourUrl}/agenda/${id}`,
-            {headers: this.#headers}
-        ).pipe(
-            tap(res => console.log("get service hour by id (list expected): " + res))
-        );
-    }
-
-    getAppointmentsByAgenda(id: number) {
-        this.updateToken();
-
-        return this.#http.get<AppointmentModel[]>(`${this.#appointmentUrl}/agenda/${id}`,
-            {headers: this.#headers}
-        ).pipe(
-            tap(res => console.log("get appointments by id (list expected): " + res))
         );
     }
 
@@ -83,6 +51,7 @@ export class AgendaService {
 
     createServiceHour(serviceHour: ServiceHourModel) {
         this.updateToken();
+
 
         return this.#http.post<ServiceHourModel>(`${this.#serviceHourUrl}`,
             serviceHour,
@@ -112,5 +81,17 @@ export class AgendaService {
         return daysMap[uppercasedDay];
     }
 
+    getAgendasByUsername(username: string): Observable<AgendaModel[]> {
+        this.updateToken();
+        if (username == '') {
+            console.log("Username vuoto")
+            throw new Error("Username vuoto")
+        }
 
+        return this.#http.get<AgendaModel[]>(`${this.#agendaUrl}/${username}`, {
+            headers: this.#headers,
+        }).pipe(
+            tap(res => console.log(res))
+        );
+    }
 }

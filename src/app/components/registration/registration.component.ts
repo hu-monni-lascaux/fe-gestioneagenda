@@ -29,20 +29,21 @@ export class RegistrationComponent {
     if (this.registrationForm.valid) {
       const user: UserModel = this.registrationForm.value;
 
-      //todo: test here
       this.#authService.doRegister(user)
         .subscribe({
           next: result => {
-            this.#router.navigate(['agendas']);
-            // this.registrationForm.reset();
-
+            this.registrationForm.reset();
+            this.#router.navigate(["home"])
           },
           error: err => {
+            console.log("sono stato qui")
             this.#router.navigate(['errorPage']);
-            // this.registrationForm.reset();
           }
         });
-
     }
+  }
+
+  loginBtn() {
+    this.#router.navigate(['login']);
   }
 }

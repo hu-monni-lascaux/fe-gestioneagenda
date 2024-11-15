@@ -2,3 +2,6 @@ mat-toolbar {
   display: flex;
   justify-content: flex-end;
 }
+.right-margin {
+  margin-right: 50px;
+}

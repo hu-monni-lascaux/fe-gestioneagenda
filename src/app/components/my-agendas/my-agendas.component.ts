@@ -83,7 +83,7 @@ export class MyAgendasComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.#agendaService.getAgendas().subscribe(res => this.agendas = res);
+    this.#agendaService.getAgendasByUsername(localStorage.getItem('username') || "").subscribe(res => this.agendas = res);
   }
 
   protected readonly onclick = onclick;
