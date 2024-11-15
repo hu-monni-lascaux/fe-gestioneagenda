@@ -7,8 +7,6 @@
   padding-left: 40px;
   padding-right: 40px;
   gap: 7px;
-
-
 }
 
 .agenda-card{
@@ -20,9 +18,4 @@
 .agenda-card:hover {
   background-color: #d3d3d3;
 
-}
-
-.new-agenda-container {
-  margin-top: 20px;
-  padding-left: 40px;
 }

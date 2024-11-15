@@ -32,16 +32,18 @@ export class RegistrationComponent {
       this.#authService.doRegister(user)
         .subscribe({
           next: result => {
-            this.#router.navigate(['agendas']);
-            // this.registrationForm.reset();
-
+            this.registrationForm.reset();
+            this.#router.navigate(["agende"])
           },
           error: err => {
+            console.log("sono stato qui")
             this.#router.navigate(['errorPage']);
-            // this.registrationForm.reset();
           }
         });
-
     }
+  }
+
+  loginBtn() {
+    this.#router.navigate(['login']);
   }
 }

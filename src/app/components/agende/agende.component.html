@@ -1,5 +1,5 @@
 <div class="container">
-  @for (agenda of agendas; track agenda.id) {
+  @for (agenda of allAgende$ | async; track agenda.id) {
     <mat-card class="agenda-card" appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ agenda.name }}</mat-card-title>
@@ -10,10 +10,4 @@
       </mat-card-actions>
     </mat-card>
   }
-
-</div>
-
-<div class="new-agenda-container">
-
-  <button mat-button (click)="createAgenda()">Nuova agenda</button>
 </div>

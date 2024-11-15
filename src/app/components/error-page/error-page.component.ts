@@ -19,7 +19,7 @@ export class ErrorPageComponent implements OnInit {
       .subscribe(() => {
         this.count--;
         if (this.count === 0) {
-          this.#router.navigate(['home']);
+          this.#router.navigate(['agende']);
         }
       });
   }

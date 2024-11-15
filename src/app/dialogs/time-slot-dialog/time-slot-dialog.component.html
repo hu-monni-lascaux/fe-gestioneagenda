@@ -14,7 +14,7 @@
 
 
 <form [formGroup]="daysForm" (ngSubmit)="onSave()">
-  <mat-dialog-content>
+  <mat-dialog-actions>
     <mat-form-field>
       <mat-label>Nome agenda</mat-label>
       <input matInput formControlName="name">
@@ -35,7 +35,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-  </mat-dialog-content>
+  </mat-dialog-actions>
   <mat-dialog-actions>
     <button mat-button (click)="onCancel()">Cancel</button>
     <button mat-raised-button type="submit" [disabled]="!daysForm.valid">Save</button>

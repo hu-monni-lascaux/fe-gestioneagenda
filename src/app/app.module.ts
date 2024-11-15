@@ -10,13 +10,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { ErrorPageComponent } from './components/error-page/error-page.component';
-import { HomepageComponent } from './components/homepage/homepage.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { MyAgendasComponent } from './components/my-agendas/my-agendas.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { AgendaComponent } from './components/agenda/agenda.component';
-import { CreateAppointmentDialogComponent } from './dialogs/create-appointment-dialog/create-appointment-dialog.component';
+import {
+  CreateAppointmentDialogComponent
+} from './dialogs/create-appointment-dialog/create-appointment-dialog.component';
 import { TimeSlotDialogComponent } from './dialogs/time-slot-dialog/time-slot-dialog.component';
+import { AgendeComponent } from './components/agende/agende.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -24,17 +27,18 @@ import { TimeSlotDialogComponent } from './dialogs/time-slot-dialog/time-slot-di
     LoginComponent,
     RegistrationComponent,
     ErrorPageComponent,
-    HomepageComponent,
     NavbarComponent,
     MyAgendasComponent,
     AgendaComponent,
     CreateAppointmentDialogComponent,
     TimeSlotDialogComponent,
+    AgendeComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    MatDialogModule,
     MaterialModule,
     HttpClientModule,
     FullCalendarModule,
