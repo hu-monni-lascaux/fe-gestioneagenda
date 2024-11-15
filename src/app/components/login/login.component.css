@@ -2,21 +2,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 200px;
+  height: 100vh;
 }
 
 mat-card {
   width: 300px;
 }
-form {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: nowrap;
-  flex-direction: column;
-  width: 100%;
-}
-.sign-up {
-}
-
-

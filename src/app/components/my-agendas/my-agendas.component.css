@@ -1,11 +1,20 @@
 
-.main-container {
-  overflow-y: auto !important;                  /* new */
-  width: 15% !important;
-  height: 100% !important;
+.container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 40px;
+  padding-right: 40px;
+  gap: 7px;
 }
 
-.agenda-card {
-  max-width: 400px;
+.agenda-card{
+  min-width: 200px;
+  max-width: 250px;
 }
 
+.new-agenda-container {
+  margin-top: 20px;
+  padding-left: 40px;
+}

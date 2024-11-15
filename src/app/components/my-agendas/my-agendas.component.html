@@ -1,14 +1,19 @@
-<div class="main-container">
-    @for (agenda of agendas; track agenda.id) {
-        <mat-card class="agenda-card" appearance="outlined">
-            <mat-card-header>
-                <mat-card-title>{{ agenda.name }}</mat-card-title>
-                <mat-card-subtitle>Agenda di {{ agenda.username }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-actions>
-                <button mat-button (click)="onClick(agenda.id!)">Open</button>
-            </mat-card-actions>
-        </mat-card>
-    }
+<div class="container">
+  @for (agenda of agendas; track agenda.id) {
+    <mat-card class="agenda-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ agenda.name }}</mat-card-title>
+        <mat-card-subtitle>Agenda di {{ agenda.username }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-button (click)="onClick(agenda.id!)">Open</button>
+      </mat-card-actions>
+    </mat-card>
+  }
 
+</div>
+
+<div class="new-agenda-container">
+
+  <button mat-button (click)="createAgenda()">Nuova agenda</button>
 </div>

@@ -120,7 +120,7 @@ export class AgendaService {
       throw new Error("Username vuoto")
     }
 
-    return this.#http.get<AgendaModel[]>(`${this.#agendaUrl}/${username}`, {
+    return this.#http.get<AgendaModel[]>(`${this.#agendaUrl}/username/${username}`, {
       headers: this.#headers,
     }).pipe(
       tap(res => console.log(res))
