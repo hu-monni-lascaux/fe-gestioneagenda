@@ -31,7 +31,6 @@ export class AgendaService {
         return Number(localStorage.getItem(this.#maxAppointmentTimeKey));
     }
 
-    // TODO: metodo da testare
     getAgendas() {
         this.updateToken();
 

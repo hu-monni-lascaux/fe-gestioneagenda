@@ -19,13 +19,7 @@ export class MyAgendasComponent implements OnInit {
   #router = inject(Router);
   #createAgendaDialog = inject(MatDialog);
 
-  // TODO: inizializzazione di prova da eliminare
-  agendas: AgendaModel[] = [{
-    id: 1,
-    username: 'pippo',
-    name: 'pippos_agenda',
-    maxAppointmentTime: "PT15M",
-  }]
+  agendas: AgendaModel[] = [];
 
   onClick(id: number) {
     this.#router.navigate([`agendas/${id}`]);
