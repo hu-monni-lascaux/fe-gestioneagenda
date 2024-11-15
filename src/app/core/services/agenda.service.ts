@@ -17,9 +17,18 @@ export class AgendaService {
     #auth = inject(AuthService);
     #headers: HttpHeaders = new HttpHeaders();
     #tokenJwt: string = "";
+    #maxAppointmentTimeKey: string = 'maxAppointmentTime';
 
     constructor() {
 
+    }
+
+    get maxAppointmentTimeKey(): string {
+        return this.#maxAppointmentTimeKey;
+    }
+
+    getMaxAppointmentTime(): number {
+        return Number(localStorage.getItem(this.#maxAppointmentTimeKey));
     }
 
     // TODO: metodo da testare

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
+import { CalendarOptions, DateSelectArg, EventClickArg } from '@fullcalendar/core';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import {Calendar} from '@fullcalendar/core';
@@ -13,7 +13,7 @@ import {
 import moment from 'moment';
 import { AgendaService } from '../../core/services/agenda.service';
 import { ActivatedRoute } from '@angular/router';
-import { forkJoin, map, Subscription, switchMap } from 'rxjs';
+import { forkJoin, map, Observable, of, Subscription, switchMap } from 'rxjs';
 import { BusinessHoursModel } from '../../core/models/business-hours.model';
 import { ServiceHourModel } from '../../core/models/service-hour.model';
 import { AppointmentModel } from '../../core/models/appointment.model';
@@ -21,6 +21,7 @@ import { AppointmentModel } from '../../core/models/appointment.model';
 interface Data {
   serviceHours: ServiceHourModel[];
   appointments: AppointmentModel[];
+  maxAppointmentTime: string
 }
 
 @Component({
@@ -37,6 +38,8 @@ export class AgendaComponent implements OnInit {
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
   #dialog = inject(MatDialog);
 
+  #maxAppointmentTime: number = 0;
+
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
     // initialView: 'dayGridWeek',
@@ -50,14 +53,28 @@ export class AgendaComponent implements OnInit {
       hour12: false
     },
     displayEventEnd: true,
-    dateClick: (arg) => this.handleDateClick(arg),
+    // dateClick: (arg) => this.handleDateClick(arg),
     eventClick: (info) => this.handleEventClick(info),
+
+    //new options
+    selectable: true,
+    select: (arg) => this.handleDateClick(arg),
+    selectConstraint: 'businessHours',
+
+    expandRows: false,
+    slotDuration: '00:05:00',
+    slotMinTime: '09:00',
+    slotMaxTime: '18:00',
+
   };
 
-  private handleDateClick(arg: DateClickArg) {
+  private handleDateClick(arg: DateSelectArg) {
     // hardcoded default, fix here
-    const startDate = moment(arg.dateStr).set({hour: 12, minute: 0}).format('YYYY-MM-DDTHH:mm');
-    const endDate = moment(startDate).add(15, "minutes").format('YYYY-MM-DDTHH:mm');
+    // const startDate = moment(arg.startStr).set({hour: 12, minute: 0}).format('YYYY-MM-DDTHH:mm');
+    // const endDate = moment(startDate).add(15, "minutes").format('YYYY-MM-DDTHH:mm');
+    const startDate = moment(arg.start).format('YYYY-MM-DDTHH:mm');
+    const endDate = moment(startDate).add(this.#maxAppointmentTime, 'minutes').format('YYYY-MM-DDTHH:mm');
+    // alert(startDate + " " + endDate);
 
     const events = this.calendarComponent?.getApi().getEvents() || [];
 
@@ -110,19 +127,21 @@ export class AgendaComponent implements OnInit {
           return this.#agendaService.getExistingAgenda(id).pipe(
             switchMap(agenda =>
               forkJoin({
+                maxAppointmentTime: of(agenda.maxAppointmentTime),
                 serviceHours: this.#agendaService.getServiceHoursByAgenda(agenda.id!),
                 appointments: this.#agendaService.getAppointmentsByAgenda(agenda.id!),
               }).pipe(
-                map(({serviceHours, appointments}) => ({
+                map(({serviceHours, appointments, maxAppointmentTime}) => ({
                   serviceHours,
-                  appointments
+                  appointments,
+                  maxAppointmentTime
                 }) as Data)
               )
             )
           );
         })
       ).subscribe({
-        next: ({serviceHours, appointments}: Data) => {
+        next: ({serviceHours, appointments, maxAppointmentTime}: Data) => {
           let businessHours: BusinessHoursModel[] = [];
 
           serviceHours.forEach(sh => {
@@ -134,6 +153,8 @@ export class AgendaComponent implements OnInit {
           });
 
           this.calendarOptions.businessHours = businessHours;
+          this.#maxAppointmentTime = Number(maxAppointmentTime.match(/\d+/));
+          localStorage.setItem(this.#agendaService.maxAppointmentTimeKey, this.#maxAppointmentTime.toString());
 
           appointments.forEach(appointment =>
             this.calendarComponent?.getApi().addEvent({

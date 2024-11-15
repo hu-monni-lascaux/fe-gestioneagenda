@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { startValidator } from '../../core/validators/start-validator';
 import { endValidator } from '../../core/validators/end-validator';
 import { overlapValidator } from '../../core/validators/overlap-validator';
+import { maxTimeValidator } from '../../core/validators/max-time.validator';
 
 @Component({
   selector: 'app-create-appointment-dialog',
@@ -23,12 +24,12 @@ export class CreateAppointmentDialogComponent {
         start: [data.start, [Validators.required, startValidator()]],
         end: [data.end, Validators.required],
       },
-      {validators: overlapValidator(this.data.existingEvents)});
+      {validators: [overlapValidator(this.data.existingEvents), maxTimeValidator()]});
 
-    this.form.controls[ 'end' ].setValidators([Validators.required, endValidator(this.form.controls[ 'start' ])]);
-    this.form.controls[ 'end' ].updateValueAndValidity();
-    this.form.controls[ 'start' ].valueChanges.subscribe(() => {
-      this.form.controls[ 'end' ].updateValueAndValidity();
+    this.form.controls['end'].setValidators([Validators.required, endValidator(this.form.controls['start'])]);
+    this.form.controls['end'].updateValueAndValidity();
+    this.form.controls['start'].valueChanges.subscribe(() => {
+      this.form.controls['end'].updateValueAndValidity();
     });
   }
 
